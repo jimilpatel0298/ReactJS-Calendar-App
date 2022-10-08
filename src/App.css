@@ -1,0 +1,22 @@
+.App {
+  position: fixed;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  /* font-size: '9px' */
+}
+.eventBox {
+  background-color: white;
+  width: 350px;
+  margin-left: 10px;
+}
+abbr {
+  text-decoration: none !important;
+}
+::-webkit-input-placeholder {
+  font-size: 13px !important;
+}
