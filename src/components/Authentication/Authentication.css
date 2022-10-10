@@ -1,0 +1,19 @@
+.authentication {
+    width: 400px;
+}
+
+.authentication Button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+}
+
+.registerButton {
+    margin-top: 20px !important;
+    padding: 0 !important;
+    border: none;
+    background: none;
+    text-decoration: underline;
+    font-style: italic;
+    font-size: 16px;
+}

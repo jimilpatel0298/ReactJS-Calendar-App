@@ -1,6 +1,6 @@
 .App {
   position: fixed;
-  display: flex;
+  /* display: flex; */
   padding: 0;
   margin: 0;
   top: 50%;
@@ -19,4 +19,20 @@ abbr {
 }
 ::-webkit-input-placeholder {
   font-size: 13px !important;
+}
+.header {
+  margin-bottom: 50px;
+  font-size: 20px;
+  text-align: left;
+  font-style: italic;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+.logout {
+  font-weight: 100;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 4px;
+  background-color: #B33F40;
+  color: white;
 }
