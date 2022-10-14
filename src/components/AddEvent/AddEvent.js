@@ -13,8 +13,8 @@ const AddEvent = (props) => {
         <Row>
           <Col sm="6" style={{ paddingRight: "0px" }}>
             <Form.Control
-              placeholder="Add task details"
-              aria-label="Enter your task"
+              placeholder="Add an event..."
+              aria-label="Enter your event"
               value={props.data.event.value}
               onChange={props.data.event.handler}
               style={{

@@ -44,7 +44,7 @@ const EventDisplay = (props) => {
           })
         ) : (
           <p style={{ textAlign: "center", fontStyle: "italic" }}>
-            No tasks for the day!
+            No events scheduled for the day!
           </p>
         )
       ) : (

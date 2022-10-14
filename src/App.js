@@ -5,19 +5,71 @@ import AddEvent from "./components/AddEvent/AddEvent";
 import "bootstrap/dist/css/bootstrap.css";
 
 import EventDisplay from "./components/Events/EventDisplay";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Authentication from "./components/Authentication/Authentication";
 
 let isInitial = true;
+let logOutTimer;
 
 export const authToken = "AIzaSyD8IUqYm3T0PZ3jDwW67ufMcduiWdALXb0";
 
 function App() {
+  const calculateRemainingTime = (expirationTime) => {
+    const currentTime = new Date().getTime();
+    const adjExpirationTime = new Date(expirationTime).getTime();
+
+    const remainingDuration = adjExpirationTime - currentTime;
+
+    return remainingDuration;
+  };
+  const retrieveStoredToken = () => {
+    const storedToken = localStorage.getItem("token");
+    const storedExpirationDate = localStorage.getItem("expirationTime");
+    const storedEmail = localStorage.getItem("email");
+
+    console.log(storedExpirationDate);
+
+    const remainingTime = calculateRemainingTime(storedExpirationDate);
+
+    if (remainingTime <= 3600) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("expirationTime");
+      localStorage.removeItem("email");
+      return null;
+    }
+
+    return { token: storedToken, duration: remainingTime, email: storedEmail };
+  };
+  const tokenData = retrieveStoredToken();
+  let initialToken;
+  let initialLoggedIn;
+  let initialEmail;
+  if (tokenData) {
+    initialToken = tokenData.token;
+    initialLoggedIn = true;
+    initialEmail = tokenData.email;
+    console.log("TokenData", tokenData, initialToken);
+  } else {
+    initialLoggedIn = false;
+    initialToken = "";
+    initialEmail = "";
+  }
+
+  const logoutHandler = useCallback(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("expirationTime");
+    localStorage.removeItem("email");
+    if (logOutTimer) {
+      clearTimeout(logOutTimer);
+    }
+    window.location.reload();
+  }, []);
   const [auth, setAuth] = useState({
-    token: "",
-    isLoggedIn: false,
-    email: "",
+    token: initialToken,
+    isLoggedIn: initialLoggedIn,
+    email: initialEmail,
   });
+  console.log(auth);
   const [switchMode, setSwitchMode] = useState(true);
   const [emailInput, setEmailInput] = useState();
   const [passwordInput, setPasswordInput] = useState();
@@ -72,9 +124,15 @@ function App() {
       })
       .then((data) => {
         setAuth({ token: data.idToken, isLoggedIn: true, email: data.email });
+        localStorage.setItem("token", data.idToken);
+        localStorage.setItem("expirationTime", data.expiresIn);
+        localStorage.setItem("email", data.email);
         setEmailInput("");
         setPasswordInput("");
         console.log(data);
+        const remainingTime = calculateRemainingTime(data.expiresIn);
+        console.log(remainingTime);
+        logOutTimer = setTimeout(logoutHandler, remainingTime);
       })
       .catch((error) => alert(error.message));
   };
@@ -120,6 +178,8 @@ function App() {
 
     const fetchEventList = async () => {
       try {
+        console.log("email", auth.email);
+
         const name = auth.email.split("@");
         const response = await fetch(
           `https://calendar-app-6ec33-default-rtdb.firebaseio.com/${name[0]}.json`
@@ -263,9 +323,12 @@ function App() {
     setEventsList(eventsListTemp);
   };
 
-  const logoutHandler = () => {
-    window.location.reload();
-  };
+  useEffect(() => {
+    if (tokenData) {
+      console.log(tokenData);
+      logOutTimer = setTimeout(logoutHandler, tokenData.duration);
+    }
+  }, [tokenData, logoutHandler]);
 
   return (
     <div className="App">
